@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 int main(int argc, char *argv[]){
     
@@ -9,9 +10,11 @@ int main(int argc, char *argv[]){
     
     int TA_COUNT = atoi(argv[1]);
     if (TA_COUNT == 0){
-        printf("Invalid NUMBER_OF_TAs! Must be an integer greater than 0.\n", argv[0])
+        printf("Invalid NUMBER_OF_TAs! Must be an integer greater than 0.\n", argv[0]);
         return 1;
     }
+
+
 
     return 0;
 }
