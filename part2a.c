@@ -25,9 +25,21 @@ void set_rubrick(char *rubrick, char *token, int *number_of_questions){
     }
 }
 
-void load_exam(char GRADE_DIRECTORY, char* file_name, struct student_exam * exam){
-    printf("Grade Directory: %c\n", GRADE_DIRECTORY);
-    printf("Filename: %c\n", *file_name);
+void load_exam(char *exam_path, char *file_name, struct student_exam* exam){
+    strcat(exam_path, "/");
+    strcat(exam_path, file_name);
+    printf("Exam Path: %s\n", exam_path);
+    FILE* exam_file_ptr = fopen(exam_path, "r");
+    if (exam_file_ptr == NULL) {
+        printf("Unable to open exam file %s\n", exam_path);
+        exit(1);
+    }
+    char buffer[20]; //double expected size of student number (to be safe)
+    exam->student_id = atoi(fgets(buffer, 20, exam_file_ptr));
+    if (exam->student_id == 0){
+        printf("Unable to parse student number (found %s). Please ensure your files only contain a single line with a 10-digit number", buffer);
+        exit(1);
+    }
 }
 
 int main(int argc, char *argv[]){
@@ -59,9 +71,11 @@ int main(int argc, char *argv[]){
         return 1;
     }
 
-    char GRADE_DIRECTORY = *argv[3];
+    printf("%s\n", argv[3]);
+
+    char* GRADE_DIRECTORY = argv[3];
     
-    char buffer[50]; //Should be more than enough, but better safe than sorry
+    char buffer[50];
 
     // Shared Memory Creation for Rubrick
 
@@ -103,6 +117,8 @@ int main(int argc, char *argv[]){
     struct student_exam *exam = shmat(shmid_student, (void *)0, 0);
 
     load_exam(GRADE_DIRECTORY, "exam_1.txt", exam);
+
+    printf("Student number in exam_1.txt is %d\n", exam->student_id);
 
     pid_t pids [TA_COUNT];
 
